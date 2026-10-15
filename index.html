@@ -372,6 +372,13 @@
   .hero-stages{padding:0 0 36px}
   @media (max-width:900px){.path-grid{grid-template-columns:1fr}.paths{padding:56px 0 40px}}
 
+  /* ---------- email toast ---------- */
+  .etoast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;pointer-events:none;z-index:90;background:var(--ink);color:var(--paper);border-radius:12px;padding:14px 18px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);display:flex;align-items:center;gap:16px;flex-wrap:wrap;max-width:calc(100% - 32px);font-size:0.92rem;transition:opacity .2s,transform .2s}
+  .etoast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .etoast b{font-weight:600}
+  .etoast a{font-weight:600;border-bottom:1px solid rgba(255,255,255,.45);padding-bottom:1px;white-space:nowrap}
+  .etoast a:hover{border-color:#fff}
+
   /* ---------- reveal ---------- */
   .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
   .reveal.in{opacity:1;transform:none}
@@ -409,12 +416,6 @@
 </style>
 </head>
 <body>
-<!-- ============ BANNER ============ -->
-<div class="banner">
-  <a href="https://rex.ryanheaphyconsulting.com/" target="_blank" rel="noopener">
-    Model your revenue forecast for free with REX <span class="arw">→</span>
-  </a>
-</div>
 
 <!-- ============ NAV ============ -->
 <nav class="nav" id="nav">
@@ -423,7 +424,6 @@
     <div class="nav-links">
       <a data-scroll="approach">Approach</a>
       <a data-scroll="proof">Results</a>
-      <a class="try" href="https://rex.ryanheaphyconsulting.com/" target="_blank" rel="noopener">REX</a>
       <a class="nav-cta" href="https://calendar.app.google/ANtRVrPJWGt3j6H7A" target="_blank" rel="noopener">Book a diagnostic</a>
     </div>
     <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -431,7 +431,6 @@
   <div class="wrap mobile-menu" id="mobileMenu">
     <a data-scroll="approach">Approach</a>
     <a data-scroll="proof">Results</a>
-    <a class="try" href="https://rex.ryanheaphyconsulting.com/" target="_blank" rel="noopener">Try REX</a>
     <a href="https://calendar.app.google/ANtRVrPJWGt3j6H7A" target="_blank" rel="noopener">Book a diagnostic</a>
   </div>
 </nav>
@@ -455,8 +454,7 @@
             <a class="btn btn-ghost" data-scroll="proof">See the results</a>
           </div>
           <div class="hero-tags">
-            <a href="tel:931.675.7112"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.74-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>931.675.7112</a>
-            <a href="mailto:Ryan@RyanHeaphyConsulting.com"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>Email Ryan</a>
+            <a href="mailto:Ryan@RyanHeaphyConsulting.com" data-email="Ryan@RyanHeaphyConsulting.com"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>Email Ryan</a>
             <a href="https://www.linkedin.com/in/ryanheaphy/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
           </div>
         </div>
@@ -786,8 +784,8 @@
         <div class="eyebrow" style="justify-content:center">Let's talk <span class="arw">→</span></div>
         <h2>Connect for an initial diagnostic and custom scope of work.</h2>
         <div class="row">
-          <a class="btn btn-primary" href="tel:931.675.7112">Call 931.675.7112</a>
-          <a class="btn btn-ghost" href="mailto:Ryan@RyanHeaphyConsulting.com">Email Ryan</a>
+          <a class="btn btn-primary" href="https://calendar.app.google/ANtRVrPJWGt3j6H7A" target="_blank" rel="noopener">Book a diagnostic</a>
+          <a class="btn btn-ghost" href="mailto:Ryan@RyanHeaphyConsulting.com" data-email="Ryan@RyanHeaphyConsulting.com">Email Ryan</a>
           <a class="btn btn-ghost" href="https://www.linkedin.com/in/ryanheaphy/" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
@@ -1205,6 +1203,25 @@
       if(!open) card.classList.add('open');
     });
   });
+  /* ---- email: copy + Gmail option on desktop, native mail on phones ---- */
+  (function(){
+    var toast=document.createElement('div'); toast.className='etoast'; toast.setAttribute('role','status'); document.body.appendChild(toast);
+    var timer;
+    document.addEventListener('click',function(e){
+      var a=e.target.closest('a[data-email]'); if(!a) return;
+      if(window.matchMedia('(pointer:coarse)').matches) return; // phones: let the mail app open
+      e.preventDefault();
+      var addr=a.getAttribute('data-email');
+      var gmail='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(addr);
+      var done=function(copied){
+        toast.innerHTML=(copied?'<span>Copied <b>'+addr+'</b></span>':'<span><b>'+addr+'</b></span>')+
+          '<a href="'+gmail+'" target="_blank" rel="noopener">Open in Gmail</a>'+
+          '<a href="mailto:'+addr+'">Open mail app</a>';
+        toast.classList.add('show'); clearTimeout(timer); timer=setTimeout(function(){toast.classList.remove('show')},7000);
+      };
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(addr).then(function(){done(true)},function(){done(false)}); } else { done(false); }
+    });
+  })();
 </script>
 </body>
 </html>
